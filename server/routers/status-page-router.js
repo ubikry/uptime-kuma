@@ -82,6 +82,10 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
             [statusPageID]
         );
 
+        // 添加统计数据对象
+        let avgPingList = {};
+        let currentPingList = {};
+
         for (let monitorID of monitorIDList) {
             let list = await R.getAll(
                 `
@@ -97,12 +101,32 @@ router.get("/api/status-page/heartbeat/:slug", cache("1 minutes"), async (reques
             heartbeatList[monitorID] = list.reverse().map((row) => row.toPublicJSON());
 
             const uptimeCalculator = await UptimeCalculator.getUptimeCalculator(monitorID);
-            uptimeList[`${monitorID}_24`] = uptimeCalculator.get24Hour().uptime;
+            const uptimeData24h = uptimeCalculator.get24Hour();
+            const uptimeData30d = uptimeCalculator.get30Day();
+            const uptimeData1y = uptimeCalculator.get1Year();
+
+            // 24小时在线率
+            uptimeList[`${monitorID}_24`] = uptimeData24h.uptime;
+            // 30天在线率
+            uptimeList[`${monitorID}_720`] = uptimeData30d.uptime;
+            // 1年在线率
+            uptimeList[`${monitorID}_1y`] = uptimeData1y.uptime;
+
+            // 24小时平均响应时间
+            avgPingList[`${monitorID}_24`] = uptimeData24h.avgPing;
+
+            // 当前响应时间（最新心跳）
+            if (list.length > 0) {
+                const latestHeartbeat = list[list.length - 1];
+                currentPingList[monitorID] = latestHeartbeat.ping || 0;
+            }
         }
 
         response.json({
             heartbeatList,
             uptimeList,
+            avgPingList,
+            currentPingList,
         });
     } catch (error) {
         sendHttpError(response, error.message);

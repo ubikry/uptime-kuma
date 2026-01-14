@@ -120,6 +120,14 @@
                                         <HeartbeatBar size="mid" :monitor-id="monitor.element.id" />
                                     </div>
                                 </div>
+                                <!-- 统计信息展示 - 直接显示 -->
+                                <MonitorStats
+                                    v-if="!editMode"
+                                    :monitor-id="monitor.element.id"
+                                    :show-cert-expiry="showCertificateExpiry"
+                                    :cert-expiry-days="monitor.element.certExpiryDaysRemaining"
+                                    :valid-cert="monitor.element.validCert"
+                                />
                             </div>
                         </template>
                     </Draggable>
@@ -138,6 +146,7 @@ import Uptime from "./Uptime.vue";
 import Tag from "./Tag.vue";
 import Status from "./Status.vue";
 import GroupSortDropdown from "./GroupSortDropdown.vue";
+import MonitorStats from "./MonitorStats.vue";
 
 export default {
     components: {
@@ -148,6 +157,7 @@ export default {
         Tag,
         Status,
         GroupSortDropdown,
+        MonitorStats,
     },
     props: {
         /** Are we in edit mode? */
@@ -316,6 +326,23 @@ export default {
 
 .monitor-list {
     min-height: 46px;
+}
+
+.item {
+    padding: 10px;
+    margin: -10px;
+    margin-bottom: 8px;
+    transition: all ease-in-out 0.15s;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 18px;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.dark .item {
+    border-bottom-color: #2d3748;
 }
 
 .item-name {
