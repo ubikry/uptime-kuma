@@ -36,6 +36,9 @@ export default defineConfig({
             srcDir: "src",
             filename: "serviceWorker.ts",
             strategies: "injectManifest",
+            injectManifest: {
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+            },
         }),
     ],
     css: {
@@ -51,7 +54,7 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
-                manualChunks(id, { getModuleInfo, getModuleIds }) {},
+                manualChunks(id, { getModuleInfo, getModuleIds }) { },
             },
         },
     },
