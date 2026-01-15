@@ -3,7 +3,7 @@
         <div class="stats-grid">
             <!-- 平均响应时间 (24小时) -->
             <div class="stat-item">
-                <div class="stat-label">平均响应时间</div>
+                <div class="stat-label">{{ $t("Avg. Response") }}</div>
                 <div class="stat-subtitle">(24{{ $t("hour") }})</div>
                 <div class="stat-value">{{ formatPing(avgPing) }}</div>
             </div>
